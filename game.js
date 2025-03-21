@@ -4,7 +4,7 @@ const items = {
     'Shiba Inu': 'Alben',
     'Mini Greyhound': 'Jackie',
     'Blue Heeler Mix': 'Gabi',
-    'Pit Mix': 'Socorra',
+    'Pitty Mix': 'Socorra',
     'Pit Mix': 'Paula',
     'Blue Heeler': 'Hudson',
     'French Bulldog': 'Hillary',
