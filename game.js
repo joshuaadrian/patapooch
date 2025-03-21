@@ -7,10 +7,26 @@ const items = {
     'Pitty Mix': 'Socorra',
     'Pit Mix': 'Paula',
     'Blue Heeler': 'Hudson',
-    'French Bulldog': 'Hillary',
+    'French Bulldog': 'Hilary',
     'Scruffy Heeler': 'Jess B',
     'German Shepherd': 'Jess H',
     'Havanese': 'Kerri'
+};
+
+// Add color pairs for matches
+const matchColors = {
+    'Doberman': { bg: '#E8F5E9', border: '#2E7D32' },      // Light green/Dark green
+    'Labrador': { bg: '#E1BEE7', border: '#6A1B9A' },      // Light purple/Dark purple
+    'Shiba Inu': { bg: '#E3F2FD', border: '#1565C0' },     // Light blue/Dark blue
+    'Mini Greyhound': { bg: '#C8E6C9', border: '#388E3C' }, // Medium green/Forest green
+    'Blue Heeler Mix': { bg: '#D1C4E9', border: '#4527A0' }, // Light purple/Deep purple
+    'Pitty Mix': { bg: '#BBDEFB', border: '#1976D2' },     // Light blue/Medium blue
+    'Pit Mix': { bg: '#A5D6A7', border: '#1B5E20' },       // Sage green/Deep green
+    'Blue Heeler': { bg: '#B39DDB', border: '#311B92' },    // Medium purple/Deep purple
+    'French Bulldog': { bg: '#90CAF9', border: '#0D47A1' }, // Medium blue/Navy blue
+    'Scruffy Heeler': { bg: '#81C784', border: '#2E7D32' }, // Medium green/Dark green
+    'German Shepherd': { bg: '#9575CD', border: '#4527A0' }, // Medium purple/Deep purple
+    'Havanese': { bg: '#64B5F6', border: '#1565C0' }       // Medium blue/Dark blue
 };
 
 let matches = 0;
@@ -136,6 +152,14 @@ function handleDrop(e) {
         const draggedElement = document.querySelector(`.draggable[data-dog="${draggedDog}"]`);
         draggedElement.classList.add('matched');
         dropZone.classList.add('matched');
+        
+        // Apply unique colors for this match
+        const colors = matchColors[draggedDog];
+        draggedElement.style.backgroundColor = colors.bg;
+        draggedElement.style.borderColor = colors.border;
+        dropZone.style.backgroundColor = colors.bg;
+        dropZone.style.borderColor = colors.border;
+        
         matchedPairs.add(draggedDog);
         matches++;
         document.getElementById('score').textContent = matches;
