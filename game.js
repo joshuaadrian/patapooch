@@ -32,6 +32,7 @@ const matchColors = {
 let matches = 0;
 let matchedPairs = new Set();
 let currentPairings = new Map(); // Store the current random matches
+let draggedElement = null;  // Track currently dragged element
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -72,8 +73,13 @@ function createGameBoard() {
         div.dataset.dog = dog;
         div.style.backgroundImage = `url(./images/${dog.replace(/\s+/g, '')}.png)`;
         
+        // Add both drag and touch events
         div.addEventListener('dragstart', handleDragStart);
         div.addEventListener('dragend', handleDragEnd);
+        div.addEventListener('touchstart', handleTouchStart);
+        div.addEventListener('touchmove', handleTouchMove);
+        div.addEventListener('touchend', handleTouchEnd);
+        
         topList.appendChild(div);
     });
     
@@ -87,9 +93,13 @@ function createGameBoard() {
         ownerDiv.textContent = owner;
         dropZone.appendChild(ownerDiv);
         
+        // Add both drag and touch events
         dropZone.addEventListener('dragover', handleDragOver);
         dropZone.addEventListener('dragleave', handleDragLeave);
         dropZone.addEventListener('drop', handleDrop);
+        dropZone.addEventListener('touchenter', handleTouchEnter);
+        dropZone.addEventListener('touchleave', handleTouchLeave);
+        
         bottomList.appendChild(dropZone);
     });
 }
@@ -151,18 +161,78 @@ function showSuccessMessage() {
     }, 3000);
 }
 
-function handleDrop(e) {
+// Touch event handlers
+function handleTouchStart(e) {
+    if (e.target.classList.contains('matched')) return;
+    
+    draggedElement = e.target;
+    e.target.classList.add('dragging');
+    
+    // Prevent scrolling while dragging
     e.preventDefault();
-    const dropZone = e.target.closest('.droppable');
-    if (!dropZone || dropZone.classList.contains('matched')) return;
+}
 
+function handleTouchMove(e) {
+    if (!draggedElement) return;
+    
+    const touch = e.touches[0];
+    const dropZone = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    // Remove drag-over class from all elements
+    document.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+    });
+    
+    // Add drag-over class if we're over a valid drop zone
+    if (dropZone && dropZone.classList.contains('droppable') && !dropZone.classList.contains('matched')) {
+        dropZone.classList.add('drag-over');
+    }
+    
+    e.preventDefault();
+}
+
+function handleTouchEnd(e) {
+    if (!draggedElement) return;
+    
+    const touch = e.changedTouches[0];
+    const dropZone = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    if (dropZone && dropZone.classList.contains('droppable')) {
+        // Simulate drop event
+        const draggedDog = draggedElement.dataset.dog;
+        const targetOwner = dropZone.dataset.owner;
+        
+        handleMatch(draggedElement, dropZone, draggedDog, targetOwner);
+    }
+    
+    // Clean up
+    draggedElement.classList.remove('dragging');
+    document.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+    });
+    draggedElement = null;
+    
+    e.preventDefault();
+}
+
+function handleTouchEnter(e) {
+    if (!e.target.classList.contains('matched')) {
+        e.target.classList.add('drag-over');
+    }
+}
+
+function handleTouchLeave(e) {
+    e.target.classList.remove('drag-over');
+}
+
+// Refactor match handling into separate function to avoid code duplication
+function handleMatch(draggedElement, dropZone, draggedDog, targetOwner) {
+    if (!dropZone || dropZone.classList.contains('matched')) return;
+    
     dropZone.classList.remove('drag-over');
-    const draggedDog = e.dataTransfer.getData('text/plain');
-    const targetOwner = dropZone.dataset.owner;
     
     if (items[draggedDog] === targetOwner) {
         // Match found
-        const draggedElement = document.querySelector(`.draggable[data-dog="${draggedDog}"]`);
         draggedElement.classList.add('matched');
         dropZone.classList.add('matched');
         
@@ -187,6 +257,17 @@ function handleDrop(e) {
         // Wrong match
         showWrongMessage();
     }
+}
+
+// Update existing handleDrop function to use handleMatch
+function handleDrop(e) {
+    e.preventDefault();
+    const dropZone = e.target.closest('.droppable');
+    const draggedDog = e.dataTransfer.getData('text/plain');
+    const draggedElement = document.querySelector(`.draggable[data-dog="${draggedDog}"]`);
+    const targetOwner = dropZone.dataset.owner;
+    
+    handleMatch(draggedElement, dropZone, draggedDog, targetOwner);
 }
 
 function resetGame() {
