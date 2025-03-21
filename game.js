@@ -33,6 +33,8 @@ let matches = 0;
 let matchedPairs = new Set();
 let currentPairings = new Map(); // Store the current random matches
 let draggedElement = null;  // Track currently dragged element
+let audioContext = null;
+let audioBuffers = {};
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -52,7 +54,68 @@ function createRandomPairings() {
     });
 }
 
+function initAudio() {
+    if (audioContext) return;
+    
+    // Create audio context
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Load all sound effects
+    const sounds = {
+        'bark': 'https://www.myinstants.com/media/sounds/dry-fart.mp3',
+        'success': 'https://www.myinstants.com/media/sounds/minecraft-dog-bark.mp3',
+        'victory': 'https://www.myinstants.com/media/sounds/mario-meme.mp3'
+    };
+    
+    // Load each sound
+    Object.entries(sounds).forEach(([name, url]) => {
+        fetch(url)
+            .then(response => response.arrayBuffer())
+            .then(buffer => audioContext.decodeAudioData(buffer))
+            .then(decodedBuffer => {
+                audioBuffers[name] = decodedBuffer;
+            });
+    });
+}
+
+function playSound(soundName) {
+    // Try HTML5 Audio first (for desktop)
+    const audioMap = {
+        'bark': 'bark-sound',
+        'success': 'success-sound',
+        'victory': 'victory-sound'
+    };
+    
+    const audioElement = document.getElementById(audioMap[soundName]);
+    if (audioElement) {
+        audioElement.currentTime = 0;
+        const playPromise = audioElement.play();
+        
+        if (playPromise) {
+            playPromise.catch(() => {
+                // If HTML5 Audio fails, try Web Audio API
+                playWebAudio(soundName);
+            });
+        }
+    } else {
+        // Fallback to Web Audio API
+        playWebAudio(soundName);
+    }
+}
+
+function playWebAudio(soundName) {
+    if (!audioContext || !audioBuffers[soundName]) return;
+    
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffers[soundName];
+    source.connect(audioContext.destination);
+    source.start(0);
+}
+
 function createGameBoard() {
+    // Initialize audio if not already done
+    initAudio();
+    
     const topList = document.getElementById('left-items');
     const bottomList = document.getElementById('right-items');
     
@@ -127,34 +190,24 @@ function handleDragLeave(e) {
 
 function showWrongMessage() {
     const message = document.getElementById('wrong-message');
-    const barkSound = document.getElementById('bark-sound');
-    
-    // Show message
     message.style.display = 'block';
     
-    // Play sound
-    barkSound.currentTime = 0; // Reset sound to start
-    barkSound.play();
+    playSound('bark');
     
-    // Hide message after animation
     setTimeout(() => {
         message.style.display = 'none';
     }, 1000);
 }
 
 function playSuccessSound() {
-    const successSound = document.getElementById('success-sound');
-    successSound.currentTime = 0;
-    successSound.play();
+    playSound('success');
 }
 
 function showSuccessMessage() {
     const message = document.getElementById('success-message');
-    const victorySound = document.getElementById('victory-sound');
-    
     message.style.display = 'block';
-    victorySound.currentTime = 0;
-    victorySound.play();
+    
+    playSound('victory');
     
     setTimeout(() => {
         message.style.display = 'none';
@@ -278,4 +331,8 @@ function resetGame() {
 }
 
 // Initialize the game
-createGameBoard(); 
+createGameBoard();
+
+// Initialize audio on first user interaction
+document.addEventListener('touchstart', initAudio, { once: true });
+document.addEventListener('mousedown', initAudio, { once: true }); 
