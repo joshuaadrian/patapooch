@@ -138,6 +138,19 @@ function playSuccessSound() {
     successSound.play();
 }
 
+function showSuccessMessage() {
+    const message = document.getElementById('success-message');
+    const victorySound = document.getElementById('victory-sound');
+    
+    message.style.display = 'block';
+    victorySound.currentTime = 0;
+    victorySound.play();
+    
+    setTimeout(() => {
+        message.style.display = 'none';
+    }, 3000);
+}
+
 function handleDrop(e) {
     e.preventDefault();
     const dropZone = e.target.closest('.droppable');
@@ -167,7 +180,7 @@ function handleDrop(e) {
         
         if (matches === Object.keys(items).length) {
             setTimeout(() => {
-                alert('Congratulations! You\'ve matched all the dogs to their owners!');
+                showSuccessMessage();
             }, 500);
         }
     } else {

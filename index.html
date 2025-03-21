@@ -14,6 +14,7 @@
             background:url(./images/pata.jpg) center center / cover no-repeat #ffffff;
             margin: 0;
             padding: 15px;
+            min-height: 100vh;
         }
         .game-container {
             max-width: 1600px;
@@ -226,6 +227,30 @@
                 min-height: 30px;
             }
         }
+
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 30px 50px;
+            border-radius: 10px;
+            font-size: 32px;
+            font-weight: bold;
+            display: none;
+            animation: popIn 1s ease-out;
+            border: 3px solid #2E7D32;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -244,8 +269,10 @@
             <div class="wrong-text">WRONG!</div>
         </div>
     </div>
+    <div id="success-message" class="success-message">YOU DID IT!</div>
     <audio id="bark-sound" src="https://www.myinstants.com/media/sounds/dry-fart.mp3" preload="auto"></audio>
-    <audio id="success-sound" src="https://www.myinstants.com/media/sounds/dog-barking-sound-effect.mp3" preload="auto"></audio>
+    <audio id="success-sound" src="https://www.myinstants.com/media/sounds/minecraft-dog-bark.mp3" preload="auto"></audio>
+    <audio id="victory-sound" src="https://www.myinstants.com/media/sounds/mario-meme.mp3" preload="auto"></audio>
     <script src="game.js"></script>
 </body>
 </html> 
