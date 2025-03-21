@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pata People Pooch Pairings</title>
-    <link href="https://fonts.googleapis.com/css2?family=Headland+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&display=swap" rel="stylesheet">
     <style>
         * {
-            font-family: 'Headland One', serif;
+            font-family: 'Barlow Condensed', serif;
             box-sizing: border-box;
         }
         body {
@@ -42,23 +42,46 @@
         
         .item-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
             gap: 15px;
             padding: 10px;
         }
         
         .item {
-            padding: 15px;
+            padding: 15px 15px 5px;
             border: 2px solid #ccc;
-            border-radius: 5px;
+            border-radius: 100%;
             text-align: center;
             background-color: white;
             min-height: 40px;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
             word-break: break-word;
-            font-size: 16px;
+            font-size: 14px;
+            color: rgba(255,255,255,1);
+            aspect-ratio: 1/1;
+            text-shadow: 0 0 2px #000;
+            background-size: 110% auto;
+            line-height: 1;
+            background-position: center;
+            position: relative;
+        }
+
+        .item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0);
+            border-radius: 100%;
+            pointer-events: none;
+        }
+
+        .matched::after {
+            background: rgba(42, 180, 198,0.5);
         }
 
         .draggable {
@@ -71,12 +94,13 @@
         }
 
         .droppable {
-            border: 2px dashed #2ab4c6;
+            border: 2px dashed rgb(42, 180, 198);
         }
 
         .droppable.drag-over {
             background-color: #aed6f4;
             border-style: solid;
+            box-shadow:0 0 20px 10px #aed6f4;
         }
 
         .matched {
@@ -181,7 +205,7 @@
             }
             
             .item-list {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
                 gap: 10px;
                 padding: 5px;
             }
@@ -217,7 +241,7 @@
             }
             
             .item-list {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
                 gap: 8px;
             }
             

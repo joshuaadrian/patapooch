@@ -52,17 +52,15 @@ function createRandomPairings() {
 }
 
 function createGameBoard() {
-    const topList = document.getElementById('left-items');  // We'll keep the IDs but use them differently
+    const topList = document.getElementById('left-items');
     const bottomList = document.getElementById('right-items');
     
     topList.innerHTML = '';
     bottomList.innerHTML = '';
     
-    // Get dogs and owners from the items object
     const dogs = Object.keys(items);
     const owners = Object.values(items);
     
-    // Shuffle both arrays
     const shuffledDogs = shuffle([...dogs]);
     const shuffledOwners = shuffle([...owners]);
     
@@ -72,6 +70,7 @@ function createGameBoard() {
         div.textContent = dog;
         div.draggable = true;
         div.dataset.dog = dog;
+        div.style.backgroundImage = `url(./images/${dog.replace(/\s+/g, '')}.png)`;
         
         div.addEventListener('dragstart', handleDragStart);
         div.addEventListener('dragend', handleDragEnd);
@@ -82,6 +81,7 @@ function createGameBoard() {
         const dropZone = document.createElement('div');
         dropZone.className = 'item droppable';
         dropZone.dataset.owner = owner;
+        dropZone.style.backgroundImage = `url(./images/${owner.replace(/\s+/g, '')}.png)`;
         
         const ownerDiv = document.createElement('div');
         ownerDiv.textContent = owner;
